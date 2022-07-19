@@ -1,0 +1,13 @@
+{
+  "name": "media-controller",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "private": true,
+  "gypfile": true,
+  "dependencies": {
+    "bindings": "~1.5.0",
+    "node-addon-api": "^5.0.0"
+  }
+}
