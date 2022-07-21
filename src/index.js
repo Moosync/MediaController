@@ -1,4 +1,4 @@
-const { ButtonEnum, PlaybackStateEnum } = require('constants')
+const { ButtonEnum, PlaybackStateEnum } = require('./constants')
 module.exports = { ButtonEnum, PlaybackStateEnum }
 
 if (process.platform === "win32") {
