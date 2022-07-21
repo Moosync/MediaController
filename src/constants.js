@@ -1,5 +1,3 @@
-const MediaController = require('bindings')('MediaController').MediaController
-
 const ButtonEnum = {
   Play: 0,
   Pause: 1,
@@ -10,7 +8,9 @@ const ButtonEnum = {
   Next: 6,
   Previous: 7,
   ChannelUp: 8,
-  ChannelDown: 9
+  ChannelDown: 9,
+  Shuffle: 10,
+  Repeat: 11,
 }
 
 const PlaybackStateEnum = {
@@ -18,7 +18,7 @@ const PlaybackStateEnum = {
   Changing: 1,
   Stopped: 2,
   Playing: 3,
-  Paused: 4
+  Paused: 4,
 }
 
-module.exports = { MediaController, ButtonEnum, PlaybackStateEnum }
+module.exports = { ButtonEnum, PlaybackStateEnum }

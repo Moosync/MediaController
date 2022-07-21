@@ -9,6 +9,8 @@ export const ButtonEnum: {
   Previous: 7
   ChannelUp: 8
   ChannelDown: 9
+  Shuffle: 10
+  Repeat: 11
 }
 
 export const PlaybackStateEnum: {
@@ -38,7 +40,10 @@ export class MediaController {
   createPlayer(): void
   updatePlayerDetails(obj: PlayerDetails): void
   setButtonStatus(obj: PlayerButtons): void
-  setButtonPressCallback(callback: (arg: ButtonEnum) => void): void
+  setButtonPressCallback(
+    callback: (arg: ButtonEnum, arg1?: boolean | string) => void
+  ): void
   setPlaybackStatus(state: PlaybackStateEnum): void
+  setShuffleRepeat(shuffle = false, repeat = "Playlist" | "Track" | "None")
   getPlayer(): string
 }
