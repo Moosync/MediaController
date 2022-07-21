@@ -41,9 +41,9 @@ export class MediaController {
   updatePlayerDetails(obj: PlayerDetails): void
   setButtonStatus(obj: PlayerButtons): void
   setButtonPressCallback(
-    callback: (arg: ButtonEnum, arg1?: boolean | string) => void
+    callback: (arg: typeof ButtonEnum, arg1?: boolean | string) => void
   ): void
-  setPlaybackStatus(state: PlaybackStateEnum): void
-  setShuffleRepeat(shuffle = false, repeat = "Playlist" | "Track" | "None")
+  setPlaybackStatus(state: typeof PlaybackStateEnum): void
+  setShuffleRepeat(shuffle: boolean, repeat: "Playlist" | "Track" | "None")
   getPlayer(): string
 }
