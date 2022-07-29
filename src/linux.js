@@ -1,17 +1,18 @@
 const { ButtonEnum, PlaybackStateEnum } = require('./constants')
 
 const Player = require("mpris-service")
+const possibleLoopTypes = ['None', 'Track', 'Playlist']
 
 class MediaController {
   player = undefined
   callbackMap = {}
 
-  createPlayer () {
+  createPlayer (name) {
     this.player = Player({
-      name: "nodejs",
-      identity: "Node.js media player",
+      name: name ? name : "nodejs",
+      identity: name ? name : "nodejs",
       supportedUriSchemes: ["file", "https", "http"],
-      supportedMimeTypes: ["audio/mpeg", "application/ogg"],
+      supportedMimeTypes: ["audio/*"],
       supportedInterfaces: ["player"],
     })
   }
@@ -26,11 +27,14 @@ class MediaController {
   }
 
   setButtonStatus (obj) {
-    const { play, pause, next, prev } = obj
-    this.player.canPlay = !!play
-    this.player.canPause = !!pause
-    this.player.canGoNext = !!next
-    this.player.canGoPrevious = !!prev
+    const { play, pause, next, prev, seek, shuffle, loop } = obj
+
+    if (play !== undefined) this.player.canPlay = !!play
+    if (pause !== undefined) this.player.canPause = !!pause
+    if (next !== undefined) this.player.canGoNext = !!next
+    if (prev !== undefined) this.player.canGoPrevious = !!prev
+    if (shuffle !== undefined) this.player.shuffle = !!shuffle
+    if (loop !== undefined) this.player.loopStatus = possibleLoopTypes.includes(loop) ? loop : 'None'
   }
 
   setButtonPressCallback (callback) {
@@ -59,6 +63,9 @@ class MediaController {
     this.callbackMap["loopStatus"] = this.player.on("loopStatus", (arg) =>
       callback(ButtonEnum.Repeat, arg)
     )
+    this.callbackMap["seek"] = this.player.on("Seeked", (arg) => {
+      callback(ButtonEnum.Seek, arg)
+    })
   }
 
   setPlaybackStatus (state) {
@@ -73,11 +80,6 @@ class MediaController {
     } else if (state === PlaybackStateEnum.Closed) {
       this.player.playbackStatus = Player.PLAYBACK_STATUS_STOPPED
     }
-  }
-
-  setShuffleRepeat (shuffle = false, repeat = 'None') {
-    this.player.shuffle = !!shuffle
-    this.player.loopStatus = repeat
   }
 
   getPlayer () {

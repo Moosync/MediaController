@@ -28,22 +28,28 @@ export type PlayerDetails = {
   albumArtist?: string
   thumbnail?: string
   genres?: string[]
+  // In seconds
+  duration?: number
 }
 export type PlayerButtons = {
   play?: boolean
   pause?: boolean
   next?: boolean
   prev?: boolean
+  seek?: boolean
+  shuffle?: boolean
+  loop?: "None" | "Track" | "Playlist"
 }
 
 export class MediaController {
-  createPlayer(): void
+  createPlayer(name?: string): void
   updatePlayerDetails(obj: PlayerDetails): void
   setButtonStatus(obj: PlayerButtons): void
   setButtonPressCallback(
-    callback: (arg: ButtonEnum, arg1?: boolean | string) => void
+    callback: (arg: ButtonEnum, arg1?: boolean | number | string) => void
   ): void
   setPlaybackStatus(state: PlaybackStateEnum): void
-  setShuffleRepeat(shuffle: boolean, repeat: "Playlist" | "Track" | "None")
+  setCurrentDuration(duration: number): void
+  setAutoIncrementDuration(val: boolean): void
   getPlayer(): string
 }

@@ -11,6 +11,7 @@ const ButtonEnum = {
   ChannelDown: 9,
   Shuffle: 10,
   Repeat: 11,
+  Seek: 12
 }
 
 const PlaybackStateEnum = {
