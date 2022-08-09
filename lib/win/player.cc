@@ -110,8 +110,12 @@ Player::Player(const Napi::CallbackInfo &info)
 Napi::Value Player::createPlayer(const Napi::CallbackInfo &info) {
   auto env = info.Env();
 
-  auto mediaPlayer = MediaPlayer();
-  this->mediaPlayer = mediaPlayer;
+  try {
+    auto mediaPlayer = MediaPlayer();
+    this->mediaPlayer = mediaPlayer;
+  } catch (winrt::hresult_error const& ex) {
+    std::cout << "Error while creating media player: " << to_string(ex.message()) << std::endl;
+  }
   return env.Undefined();
 }
 
