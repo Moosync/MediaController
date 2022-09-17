@@ -193,14 +193,19 @@ Napi::Value Player::updatePlayerDetails(const Napi::CallbackInfo &info) {
   }
 
   if (mediaInfo.Thumbnail.has_value()) {
-    if (isNetworkUri(mediaInfo.Thumbnail.value().Utf8Value())) {
-      updater.Thumbnail(RandomAccessStreamReference::CreateFromUri(
-          Uri(to_hstring(mediaInfo.Thumbnail.value().Utf8Value()))));
-    } else {
-      auto asyncOp = StorageFile::GetFileFromPathAsync(
-          to_hstring(mediaInfo.Thumbnail.value().Utf8Value()));
-      updater.Thumbnail(
-          RandomAccessStreamReference::CreateFromFile(asyncOp.get()));
+    try {
+      if (isNetworkUri(mediaInfo.Thumbnail.value().Utf8Value())) {
+        updater.Thumbnail(RandomAccessStreamReference::CreateFromUri(
+            Uri(to_hstring(mediaInfo.Thumbnail.value().Utf8Value()))));
+        
+      } else {
+        auto asyncOp = StorageFile::GetFileFromPathAsync(
+            to_hstring(mediaInfo.Thumbnail.value().Utf8Value()));
+        updater.Thumbnail(
+            RandomAccessStreamReference::CreateFromFile(asyncOp.get()));
+      }
+    } catch (winrt::hresult_error const& ex) {
+        std::cout << "Error while fetching file at " << mediaInfo.Thumbnail.value().Utf8Value() << ": " << to_string(ex.message()) << std::endl;
     }
   }
 
