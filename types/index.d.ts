@@ -46,10 +46,9 @@ export class MediaController {
   updatePlayerDetails(obj: PlayerDetails): void
   setButtonStatus(obj: PlayerButtons): void
   setButtonPressCallback(
-    callback: (arg: ButtonEnum, arg1?: boolean | number | string) => void
+    callback: (arg: typeof ButtonEnum, arg1?: boolean | number | string) => void
   ): void
-  setPlaybackStatus(state: PlaybackStateEnum): void
+  setPlaybackStatus(state: typeof PlaybackStateEnum): void
   setCurrentDuration(duration: number): void
-  setAutoIncrementDuration(val: boolean): void
   getPlayer(): string
 }

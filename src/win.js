@@ -1,4 +1,4 @@
 const MediaController = require("bindings")("MediaController").MediaController
-MediaController.prototype.setShuffleRepeat = () => { }
+MediaController.prototype.setCurrentDuration = () => { }
 
 module.exports = { MediaController }
