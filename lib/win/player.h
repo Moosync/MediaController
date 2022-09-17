@@ -19,6 +19,8 @@ class Player : public Napi::ObjectWrap<Player> {
         Napi::Value setButtonStatus(const Napi::CallbackInfo &info);
         Napi::Value setButtonPressCallback(const Napi::CallbackInfo &info);
         Napi::Value setPlaybackStatus(const Napi::CallbackInfo &info);
+
+        bool playerCreated;
 };
 
 

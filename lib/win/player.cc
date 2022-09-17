@@ -1,3 +1,5 @@
+#define _SILENCE_CLANG_COROUTINE_MESSAGE 1
+
 #include "player.h"
 #include "../utils.h"
 #include <iostream>
@@ -41,6 +43,10 @@ Napi::Value Player::setPlaybackStatus(const Napi::CallbackInfo &info) {
     Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
     return env.Null();
   }
+  
+  if (!this->playerCreated) {
+    return env.Null();
+  }
 
   auto val = info[0].ToNumber().Int32Value();
   if (val >= 0 && val <= 4 && this->mediaPlayer.has_value()) {
@@ -58,6 +64,10 @@ Napi::Value Player::setButtonStatus(const Napi::CallbackInfo &info) {
 
   if (info.Length() != 1 || !info[0].IsObject()) {
     Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
+    return env.Null();
+  }
+
+  if (!this->playerCreated) {
     return env.Null();
   }
 
@@ -85,6 +95,10 @@ Napi::Value Player::setButtonPressCallback(const Napi::CallbackInfo &info) {
     Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
     return env.Null();
   }
+  
+  if (!this->playerCreated) {
+    return env.Null();
+  }
 
   // https://github.com/NyaomiDEV/WinPlayer-Node/blob/master/src/wrapper.cpp#L31
   // Their tears didn't goto waste
@@ -105,7 +119,9 @@ Napi::Value Player::setButtonPressCallback(const Napi::CallbackInfo &info) {
 }
 
 Player::Player(const Napi::CallbackInfo &info)
-    : Napi::ObjectWrap<Player>(info) {}
+    : Napi::ObjectWrap<Player>(info) {
+  this->playerCreated = false;
+    }
 
 Napi::Value Player::createPlayer(const Napi::CallbackInfo &info) {
   auto env = info.Env();
@@ -113,6 +129,7 @@ Napi::Value Player::createPlayer(const Napi::CallbackInfo &info) {
   try {
     auto mediaPlayer = MediaPlayer();
     this->mediaPlayer = mediaPlayer;
+    this->playerCreated = true;
   } catch (winrt::hresult_error const& ex) {
     std::cout << "Error while creating media player: " << to_string(ex.message()) << std::endl;
   }
@@ -124,6 +141,10 @@ Napi::Value Player::updatePlayerDetails(const Napi::CallbackInfo &info) {
 
   if (info.Length() != 1) {
     Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
+    return env.Null();
+  }
+
+  if (!this->playerCreated) {
     return env.Null();
   }
 
@@ -190,6 +211,10 @@ Napi::Value Player::updatePlayerDetails(const Napi::CallbackInfo &info) {
 
 Napi::Value Player::getPlayer(const Napi::CallbackInfo &info) {
   auto env = info.Env();
+
+  if (!this->playerCreated) {
+    return env.Null();
+  }
 
   auto sessionManager =
       GlobalSystemMediaTransportControlsSessionManager::RequestAsync().get();
