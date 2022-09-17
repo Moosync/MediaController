@@ -1,12 +1,15 @@
 const { ButtonEnum, PlaybackStateEnum } = require('./constants')
-module.exports = { ButtonEnum, PlaybackStateEnum }
 
 if (process.platform === "win32") {
-  module.exports['MediaController'] = require('./win').MediaController
+  module.exports = new (require('./win').MediaController)()
 } else if (process.platform === "linux") {
-  module.exports['MediaController'] = require('./linux').MediaController
+  module.exports = new (require('./linux').MediaController)()
 } else {
-  module.exports['MediaController'] = require('./dummy').MediaController
+  module.exports = new (require('./dummy').MediaController)()
 }
+
+module.exports.ButtonEnum = ButtonEnum
+module.exports.PlaybackStateEnum = PlaybackStateEnum
+
 
 
