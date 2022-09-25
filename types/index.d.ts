@@ -41,14 +41,17 @@ export type PlayerButtons = {
   loop?: "None" | "Track" | "Playlist"
 }
 
-export class MediaController {
+declare class MediaController {
   createPlayer(name?: string): void
   updatePlayerDetails(obj: PlayerDetails): void
   setButtonStatus(obj: PlayerButtons): void
   setButtonPressCallback(
-    callback: (arg: typeof ButtonEnum, arg1?: boolean | number | string) => void
+    callback: (arg: ButtonEnum, arg1?: boolean | number | string) => void
   ): void
-  setPlaybackStatus(state: typeof PlaybackStateEnum): void
+  setPlaybackStatus(state: PlaybackStateEnum): void
   setCurrentDuration(duration: number): void
   getPlayer(): string
 }
+
+declare const mediaController: MediaController
+export default mediaController
