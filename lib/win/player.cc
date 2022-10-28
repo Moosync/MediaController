@@ -24,9 +24,11 @@ Napi::Object Player::Init(Napi::Env env, Napi::Object exports) {
        InstanceMethod("createPlayer", &Player::createPlayer),
        InstanceMethod("updatePlayerDetails", &Player::updatePlayerDetails),
        InstanceMethod("setButtonStatus", &Player::setButtonStatus),
+       InstanceMethod("getButtonStatus", &Player::getButtonStatus),
        InstanceMethod("setButtonPressCallback",
                       &Player::setButtonPressCallback),
-       InstanceMethod("setPlaybackStatus", &Player::setPlaybackStatus)});
+       InstanceMethod("setPlaybackStatus", &Player::setPlaybackStatus),
+       InstanceMethod("getPlaybackStatus", &Player::getPlaybackStatus)});
 
   Napi::FunctionReference *constructor = new Napi::FunctionReference();
   *constructor = Napi::Persistent(func);
@@ -43,7 +45,7 @@ Napi::Value Player::setPlaybackStatus(const Napi::CallbackInfo &info) {
     Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
     return env.Null();
   }
-  
+
   if (!this->playerCreated) {
     return env.Null();
   }
@@ -57,6 +59,25 @@ Napi::Value Player::setPlaybackStatus(const Napi::CallbackInfo &info) {
   }
 
   return env.Undefined();
+}
+
+Napi::Value Player::getPlaybackStatus(const Napi::CallbackInfo &info) {
+  auto env = info.Env();
+
+  if (!this->playerCreated) {
+    return env.Null();
+  }
+
+  const auto systemMediaTransportControls =
+      this->mediaPlayer->SystemMediaTransportControls();
+
+  auto obj = Napi::Object::New(env);
+  obj.Set("playbackStatus",
+          Napi::Value::From(
+              env,
+              static_cast<int>(systemMediaTransportControls.PlaybackStatus())));
+
+  return obj;
 }
 
 Napi::Value Player::setButtonStatus(const Napi::CallbackInfo &info) {
@@ -85,7 +106,26 @@ Napi::Value Player::setButtonStatus(const Napi::CallbackInfo &info) {
     systemMediaTransportControls.IsPreviousEnabled(getBool(obj, "prev"));
   }
 
-  return env.Undefined();
+  return obj;
+}
+
+Napi::Value Player::getButtonStatus(const Napi::CallbackInfo &info) {
+  auto env = info.Env();
+  if (!this->playerCreated) {
+    return env.Null();
+  }
+
+  const auto systemMediaTransportControls =
+      this->mediaPlayer->SystemMediaTransportControls();
+
+  auto obj = Napi::Object::New(env);
+  obj.Set("play", systemMediaTransportControls.IsPlayEnabled());
+  obj.Set("pause", systemMediaTransportControls.IsPauseEnabled());
+  obj.Set("next", systemMediaTransportControls.IsNextEnabled());
+  obj.Set("prev", systemMediaTransportControls.IsPreviousEnabled());
+  obj.Set("shuffle", systemMediaTransportControls.ShuffleEnabled());
+
+  return obj;
 }
 
 Napi::Value Player::setButtonPressCallback(const Napi::CallbackInfo &info) {
@@ -95,7 +135,7 @@ Napi::Value Player::setButtonPressCallback(const Napi::CallbackInfo &info) {
     Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
     return env.Null();
   }
-  
+
   if (!this->playerCreated) {
     return env.Null();
   }
@@ -121,7 +161,7 @@ Napi::Value Player::setButtonPressCallback(const Napi::CallbackInfo &info) {
 Player::Player(const Napi::CallbackInfo &info)
     : Napi::ObjectWrap<Player>(info) {
   this->playerCreated = false;
-    }
+}
 
 Napi::Value Player::createPlayer(const Napi::CallbackInfo &info) {
   auto env = info.Env();
@@ -130,8 +170,9 @@ Napi::Value Player::createPlayer(const Napi::CallbackInfo &info) {
     auto mediaPlayer = MediaPlayer();
     this->mediaPlayer = mediaPlayer;
     this->playerCreated = true;
-  } catch (winrt::hresult_error const& ex) {
-    std::cout << "Error while creating media player: " << to_string(ex.message()) << std::endl;
+  } catch (winrt::hresult_error const &ex) {
+    std::cout << "Error while creating media player: "
+              << to_string(ex.message()) << std::endl;
   }
   return env.Undefined();
 }
@@ -197,15 +238,17 @@ Napi::Value Player::updatePlayerDetails(const Napi::CallbackInfo &info) {
       if (isNetworkUri(mediaInfo.Thumbnail.value().Utf8Value())) {
         updater.Thumbnail(RandomAccessStreamReference::CreateFromUri(
             Uri(to_hstring(mediaInfo.Thumbnail.value().Utf8Value()))));
-        
+
       } else {
         auto asyncOp = StorageFile::GetFileFromPathAsync(
             to_hstring(mediaInfo.Thumbnail.value().Utf8Value()));
         updater.Thumbnail(
             RandomAccessStreamReference::CreateFromFile(asyncOp.get()));
       }
-    } catch (winrt::hresult_error const& ex) {
-        std::cout << "Error while fetching file at " << mediaInfo.Thumbnail.value().Utf8Value() << ": " << to_string(ex.message()) << std::endl;
+    } catch (winrt::hresult_error const &ex) {
+      std::cout << "Error while fetching file at "
+                << mediaInfo.Thumbnail.value().Utf8Value() << ": "
+                << to_string(ex.message()) << std::endl;
     }
   }
 
