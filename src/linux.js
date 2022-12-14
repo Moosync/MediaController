@@ -66,6 +66,9 @@ class MediaController {
     this.callbackMap["seek"] = this.player.on("Seeked", (arg) => {
       callback(ButtonEnum.Seek, arg)
     })
+    this.callbackMap["playpause"] = this.player.on("playpause", () => {
+      callback(ButtonEnum.PlayPause)
+    })
   }
 
   setPlaybackStatus (state) {
