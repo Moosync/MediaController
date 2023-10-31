@@ -1,6 +1,6 @@
 {
   "name": "media-controller",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "src/index.js",
   "types": "types/index.d.ts",
