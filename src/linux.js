@@ -27,7 +27,7 @@ class MediaController {
   updatePlayerDetails (obj) {
     this.player.metadata = {
       "mpris:artUrl": obj.thumbnail,
-      "mrpis:trackid": obj.trackid && this.player.objectPath(obj.trackid),
+      "mpris:trackid": obj.trackid && this.player.objectPath(obj.trackid),
       "mpris:length": obj.duration,
       "xesam:title": obj.title,
       "xesam:album": obj.albumName,
