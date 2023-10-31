@@ -12,7 +12,8 @@ const ButtonEnum = {
   Shuffle: 10,
   Repeat: 11,
   Seek: 12,
-  PlayPause: 13
+  PlayPause: 13,
+  Position: 14,
 }
 
 const PlaybackStateEnum = {

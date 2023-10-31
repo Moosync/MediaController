@@ -79,6 +79,9 @@ class MediaController {
     this.callbackMap["playpause"] = this.player.on("playpause", () => {
       callback(ButtonEnum.PlayPause)
     })
+    this.callbackMap["position"] = this.player.on("position", (arg) => {
+      callback(ButtonEnum.Position, arg)
+    })
   }
 
   setPlaybackStatus (state) {
