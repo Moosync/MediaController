@@ -6,6 +6,11 @@ const possibleLoopTypes = ['None', 'Track', 'Playlist']
 class MediaController {
   player = undefined
   callbackMap = {}
+  _position = 0
+
+  getPosition() {
+    return this._position
+  }
 
   createPlayer (name) {
     this.player = Player({
@@ -15,14 +20,19 @@ class MediaController {
       supportedMimeTypes: ["audio/*"],
       supportedInterfaces: ["player"],
     })
+
+    this.player.getPosition = this.getPosition.bind(this)
   }
 
   updatePlayerDetails (obj) {
     this.player.metadata = {
       "mpris:artUrl": obj.thumbnail,
+      "mrpis:trackid": obj.trackid && this.player.objectPath(obj.trackid),
+      "mpris:length": obj.duration,
       "xesam:title": obj.title,
       "xesam:album": obj.albumName,
       "xesam:artist": obj.artistName.split(","),
+      "xesam:url": obj.url,
     }
   }
 
@@ -87,6 +97,10 @@ class MediaController {
 
   getPlayer () {
     return this.player.name
+  }
+
+  setCurrentDuration(duration) {
+    this._position = duration
   }
 }
 

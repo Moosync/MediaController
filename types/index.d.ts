@@ -22,6 +22,7 @@ export const enum PlaybackStateEnum {
 }
 
 export type PlayerDetails = {
+  id: string,
   title?: string
   artistName?: string
   albumName?: string
